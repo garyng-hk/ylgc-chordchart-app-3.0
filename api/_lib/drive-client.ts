@@ -8,10 +8,6 @@ let drive: drive_v3.Drive | null = null;
  * Initializes and returns an authenticated Google Drive API client.
  * This function uses a singleton pattern to avoid re-initializing the client
  * on every function invocation in a warm serverless environment.
- * 
- * It relies on the following environment variables for a service account:
- * - GOOGLE_SERVICE_ACCOUNT_EMAIL: The email address of the service account.
- * - GOOGLE_PRIVATE_KEY: The private key for the service account.
  */
 export const getDriveClient = (): drive_v3.Drive => {
   if (drive) {
