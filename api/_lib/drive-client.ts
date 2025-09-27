@@ -10,7 +10,7 @@ let drive: drive_v3.Drive | null = null;
  * on every function invocation in a warm serverless environment.
  * 
  * It relies on the following environment variables for a service account:
- * - GOOGLE_CLIENT_EMAIL: The email address of the service account.
+ * - GOOGLE_SERVICE_ACCOUNT_EMAIL: The email address of the service account.
  * - GOOGLE_PRIVATE_KEY: The private key for the service account.
  */
 export const getDriveClient = (): drive_v3.Drive => {
@@ -19,9 +19,9 @@ export const getDriveClient = (): drive_v3.Drive => {
   }
 
   // Ensure environment variables are set
-  if (!process.env.GOOGLE_CLIENT_EMAIL || !process.env.GOOGLE_PRIVATE_KEY) {
+  if (!process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL || !process.env.GOOGLE_PRIVATE_KEY) {
     throw new Error(
-      'Google service account credentials (GOOGLE_CLIENT_EMAIL, GOOGLE_PRIVATE_KEY) are not set in environment variables.'
+      'Google service account credentials (GOOGLE_SERVICE_ACCOUNT_EMAIL, GOOGLE_PRIVATE_KEY) are not set in environment variables.'
     );
   }
   
@@ -31,7 +31,7 @@ export const getDriveClient = (): drive_v3.Drive => {
   // Authenticate using the service account
   const auth = new google.auth.GoogleAuth({
     credentials: {
-      client_email: process.env.GOOGLE_CLIENT_EMAIL,
+      client_email: process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL,
       private_key: privateKey,
     },
     scopes: ['https://www.googleapis.com/auth/drive.readonly'],
