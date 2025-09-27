@@ -1,29 +1,6 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { google } from 'googleapis';
 import type { DriveFile } from '../src/types';
-
-/**
- * Creates and configures an authenticated Google Drive API client.
- * @returns An authenticated Google Drive API client instance.
- * @throws Will throw an error if required environment variables are not set.
- */
-function getDriveClient() {
-    const { GOOGLE_SERVICE_ACCOUNT_EMAIL, GOOGLE_PRIVATE_KEY } = process.env;
-
-    if (!GOOGLE_SERVICE_ACCOUNT_EMAIL || !GOOGLE_PRIVATE_KEY) {
-        throw new Error('Google Drive API environment variables (GOOGLE_SERVICE_ACCOUNT_EMAIL, GOOGLE_PRIVATE_KEY) are not configured on the server.');
-    }
-
-    const auth = new google.auth.JWT(
-        GOOGLE_SERVICE_ACCOUNT_EMAIL,
-        null,
-        GOOGLE_PRIVATE_KEY.replace(/\\n/g, '\n'), // Handle newlines in env var
-        ['https://www.googleapis.com/auth/drive.readonly']
-    );
-
-    return google.drive({ version: 'v3', auth });
-}
-
+import { getDriveClient } from './_lib/drive-client';
 
 export default async function handler(
   req: VercelRequest,
@@ -49,7 +26,7 @@ export default async function handler(
     let pageToken: string | null | undefined = undefined;
 
     do {
-        const response = await drive.files.list({
+        const response: any = await drive.files.list({
             q: query,
             fields: 'nextPageToken, files(id, name, mimeType)',
             pageToken: pageToken,

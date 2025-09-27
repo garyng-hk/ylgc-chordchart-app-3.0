@@ -29,7 +29,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         }
 
         console.log('- Initializing GoogleGenAI client...');
-        // FIX: The API key must be passed within an object like { apiKey: ... }
         const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
         console.log('- GoogleGenAI client initialized.');
         
@@ -63,13 +62,12 @@ Example: For Title "Amazing Grace", Key "G", Lyrics "saved a wretch", the output
         });
         console.log('- Gemini API call successful.');
 
-        // FIX: Add a safety check for response.text, which can be undefined.
-        const driveQuery = response.text?.trim() ?? '';
-        console.log('- Generated Drive Query:', driveQuery);
-
-        if (!driveQuery) {
-            throw new Error('Gemini failed to generate a search query.');
+        if (!response.text) {
+             console.error('ERROR: Gemini response text is empty.');
+             throw new Error('Gemini failed to generate a search query (response text is empty).');
         }
+        const driveQuery = response.text.trim();
+        console.log('- Generated Drive Query:', driveQuery);
 
         console.log('- Getting Google Drive client...');
         const drive = getDriveClient();
@@ -79,7 +77,7 @@ Example: For Title "Amazing Grace", Key "G", Lyrics "saved a wretch", the output
         const searchResult = await drive.files.list({
             q: driveQuery,
             fields: 'files(id, name, mimeType)',
-            pageSize: 50, // Limit results to a reasonable number to avoid overwhelming the user
+            pageSize: 50,
         });
         console.log('- Google Drive search successful.');
 
